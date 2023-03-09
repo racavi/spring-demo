@@ -24,7 +24,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
 @WebMvcTest(GreetingController.class)
-public class GreetingControllerTest {
+class GreetingControllerTest {
     @Autowired
     private MockMvc mvc;
 
