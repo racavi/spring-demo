@@ -30,13 +30,12 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh 'cd app'
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh 'mvn -version'
-                    sh 'mvn clean install'
+                    dir('app') {
+                        sh 'pwd'
+                        sh 'ls -la'
+                        sh 'mvn -version'
+                        sh 'mvn clean install'
+                    }
                 }
             }
         }
