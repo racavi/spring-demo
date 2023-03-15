@@ -15,7 +15,7 @@ pipeline {
         }
     }
     options {
-        checkoutToSubdirectory('app') }
+        checkoutToSubdirectory('app')
     }
     stages {
         stage('Checkout Repository') {
