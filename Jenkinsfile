@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers:
           - name: maven
-            image: maven:alpine
+            image: maven:3.9-eclipse-temurin-17-alpine
             command:
             - cat
             tty: true
