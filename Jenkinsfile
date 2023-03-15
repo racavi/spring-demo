@@ -29,7 +29,7 @@ pipeline {
                 container('maven') {
                     sh 'pwd'
                     sh 'ls -la'
-                    sh 'cd app/'
+                    sh 'cd app'
                     sh 'pwd'
                     sh 'ls -la'
                     sh 'mvn -version'
