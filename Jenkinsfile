@@ -23,6 +23,7 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
+                    sh 'pwd'
                     sh 'cd app/'
                     sh 'mvn -version'
                     sh 'mvn clean install'
