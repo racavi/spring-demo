@@ -9,6 +9,7 @@ pipeline {
           - name: local-maven-repo
             persistentVolumeClaim:
               claimName: maven-repo-pvc
+          - name: varlibcontainers
           containers:
           - name: maven
             image: maven:3.9-eclipse-temurin-17-alpine
@@ -19,6 +20,16 @@ pipeline {
               - mountPath: "/root/.m2/repository"
                 name: local-maven-repo
                 readOnly: false
+          - name: buildah
+            image: quay.io/containers/buildah/stable:v1.29.1
+            command:
+            - cat
+            tty: true
+            securityContext:
+              privileged: true
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
         '''
         }
     }
@@ -38,6 +49,13 @@ pipeline {
                         sh 'mvn -version'
                         sh 'mvn clean install'
                     }
+                }
+            }
+        }
+        stage('Build Image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah build -t rafacalvo/spring-demo:latest .'
                 }
             }
         }
