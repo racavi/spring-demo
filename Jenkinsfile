@@ -58,7 +58,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 container('buildah') {
-                    sh 'buildah build -t rafacalvo/spring-demo:latest .'
+                    sh 'buildah build -t rafacalvo/spring-demo:0.0.1-SNAPSHOT .'
                 }
             }
         }
@@ -66,6 +66,21 @@ pipeline {
             steps {
                 container('buildah') {
                     sh 'echo $DH_CREDS_PSW | buildah login -u $DH_CREDS_USR --password-stdin docker.io'
+                }
+            }
+        }
+        stage('tag image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah tag rafacalvo/spring-demo:0.0.1-SNAPSHOT rafacalvo/spring-demo:latest'
+                }
+            }
+        }
+        stage('push image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah push rafacalvo/spring-demo:0.0.1-SNAPSHOT'
+                    sh 'buildah push rafacalvo/spring-demo:latest'
                 }
             }
         }
