@@ -12,7 +12,7 @@ pipeline {
           - name: varlibcontainers
           containers:
           - name: maven
-            image: maven:3.9-eclipse-temurin-17-alpine
+            image: docker.io/maven:3.9-eclipse-temurin-17-alpine
             command:
             - cat
             tty: true
