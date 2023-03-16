@@ -5,12 +5,20 @@ pipeline {
         apiVersion: v1
         kind: Pod
         spec:
+          volumes:
+          - name: local-maven-repo
+            persistentVolumeClaim:
+              claimName: maven-repo-pvc
           containers:
           - name: maven
             image: maven:3.9-eclipse-temurin-17-alpine
             command:
             - cat
             tty: true
+            volumeMounts:
+              - mountPath: "/root/.m2/repository"
+                name: local-maven-repo
+                readOnly: false
         '''
         }
     }
