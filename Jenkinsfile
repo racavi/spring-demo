@@ -21,7 +21,7 @@ pipeline {
                 name: local-maven-repo
                 readOnly: false
           - name: buildah
-            image: quay.io/containers/buildah/stable:v1.29.1
+            image: quay.io/buildah/stable:v1.29.1
             command:
             - cat
             tty: true
