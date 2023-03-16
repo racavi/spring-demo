@@ -36,6 +36,9 @@ pipeline {
     options {
         checkoutToSubdirectory('app')
     }
+    environment {
+        DH_CREDS=credentials('dh-creds')
+    }
     stages {
         stage('Checkout Repository') {
             steps {
@@ -57,6 +60,20 @@ pipeline {
                 container('buildah') {
                     sh 'buildah build -t rafacalvo/spring-demo:latest .'
                 }
+            }
+        }
+        stage('Login to Docker Hub') {
+            steps {
+                container('buildah') {
+                    sh 'echo $DH_CREDS_PSW | buildah login -u $DH_CREDS_USR --password-stdin docker.io'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            container('buildah') {
+                sh 'buildah logout docker.io'
             }
         }
     }
