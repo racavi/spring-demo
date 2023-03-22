@@ -1,0 +1,90 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          volumes:
+          - name: local-maven-repo
+            persistentVolumeClaim:
+              claimName: maven-repo-pvc
+          - name: varlibcontainers
+          containers:
+          - name: maven
+            image: docker.io/maven:3.9-eclipse-temurin-17-alpine
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+              - mountPath: "/root/.m2/repository"
+                name: local-maven-repo
+                readOnly: false
+          - name: buildah
+            image: quay.io/buildah/stable:v1.29.1
+            command:
+            - cat
+            tty: true
+            securityContext:
+              privileged: true
+            volumeMounts:
+              - name: varlibcontainers
+                mountPath: /var/lib/containers
+        '''
+        }
+    }
+    options {
+        checkoutToSubdirectory('app')
+    }
+    environment {
+        DH_CREDS=credentials('dh-creds')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                container('maven') {
+                    dir('app') {
+                        sh 'mvn -version'
+                        sh 'mvn clean install'
+                    }
+                }
+            }
+        }
+        stage('Build Image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah build -t rafacalvo/spring-demo:0.0.1-SNAPSHOT .'
+                }
+            }
+        }
+        stage('Login to Docker Hub') {
+            steps {
+                container('buildah') {
+                    sh 'echo $DH_CREDS_PSW | buildah login -u $DH_CREDS_USR --password-stdin docker.io'
+                }
+            }
+        }
+        stage('tag image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah tag rafacalvo/spring-demo:0.0.1-SNAPSHOT rafacalvo/spring-demo:latest'
+                }
+            }
+        }
+        stage('push image') {
+            steps {
+                container('buildah') {
+                    sh 'buildah push rafacalvo/spring-demo:0.0.1-SNAPSHOT'
+                    sh 'buildah push rafacalvo/spring-demo:latest'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            container('buildah') {
+                sh 'buildah logout docker.io'
+            }
+        }
+    }
+}
