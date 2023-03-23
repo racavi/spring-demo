@@ -1,0 +1,22 @@
+name: Trigger Jenkins build upon merged PR against master
+run-name: ${{ github.actor }} triggered a Jenkins build
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+
+jobs:
+
+  build:
+    name: Build
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: trigger single Job
+        uses: appleboy/jenkins-action@master
+        with:
+          url: "https://2b48-169-150-218-133.eu.ngrok.io"
+          user: "admin"
+          token: ${{ secrets.JENKINS_TOKEN }}
+          job: "build-after-merged-pr"
