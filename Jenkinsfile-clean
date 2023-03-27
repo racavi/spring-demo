@@ -41,7 +41,7 @@ pipeline {
             steps {
                 container('maven') {
                     dir('app') {
-                        sh 'mvn clean package'
+                        sh 'mvn -B -DskipTests clean package'
                     }
                 }
             }
