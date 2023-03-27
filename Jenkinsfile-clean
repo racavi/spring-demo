@@ -41,10 +41,6 @@ pipeline {
             steps {
                 container('maven') {
                     dir('app') {
-                        sh 'echo "This is the working directory:"'
-                        sh 'pwd'
-                        sh 'ls -la'
-                        sh 'mvn -version'
                         sh 'mvn clean package'
                     }
                 }
