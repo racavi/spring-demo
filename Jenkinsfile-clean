@@ -54,6 +54,15 @@ pipeline {
                     }
                 }
             }
+            post {
+                always {
+                    container('maven') {
+                        dir('app') {
+                            junit 'target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+            }
         }
     }
 }
